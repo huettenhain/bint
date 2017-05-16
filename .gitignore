@@ -1,3 +1,11 @@
+# Visual Studio
+Win32
+x64
+.vs
+*.vcxproj.*
+*.opendb
+*.VC.db
+
 # Prerequisites
 *.d
 
