@@ -2,7 +2,7 @@
 #include <memory.h>
 
 #include "bint.h"
-#include "base.c"
+#include "atomics_inline.c"
 
 
 bint *_bint_shrt_add    (bint *result, bint *a, word b, ulong flip);

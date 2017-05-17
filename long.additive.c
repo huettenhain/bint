@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "bint.h"
-#include "base.c"
+#include "atomics_inline.c"
 
 word braw_shorter_add(word *dst, word *a, word *b, ulong a_len, ulong b_len) {   
     word carry;

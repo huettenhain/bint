@@ -3,7 +3,7 @@
 
 #include "bint.h"
 #include "fft.h"
-#include "base.c"
+#include "atomics_inline.c"
 
 
 void braw_gmul(word *dst, word *a, word *b, ulong a_len, ulong b_len)
@@ -272,7 +272,14 @@ bint_divmod_result bint_divmod(bint *result, bint *a, bint *b, bint *remainder) 
 
     if (bint_is_zero(b))
         return BDIV_ZERODIV;
-       
+
+/* TODO: implement fall-back to one word operation */
+#if 0
+	if (b->len == 1) {
+		/* ... */	
+	}
+#endif
+
     switch( braw_compare( a->digits, b->digits, a->len,  b->len ) ) {
     case  0: 
         if (remainder)
@@ -298,7 +305,7 @@ bint_divmod_result bint_divmod(bint *result, bint *a, bint *b, bint *remainder) 
         return BDIV_OK;
     case  1: 
         context = result ? result->context : remainder->context;
-   
+
         if (bmc_resize(context, GDIV_BUFFERSIZE( a->len, b->len ))) {   
             ulong r,l;
 

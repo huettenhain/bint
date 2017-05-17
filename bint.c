@@ -8,8 +8,6 @@
 #include "macros.h"
 #include "bint.h"
 
-
-
 bint *bint_init(bmc *context, sint init) {
 	return bint_init_alloc(context, init, BINT_INITSIZE);
 }
@@ -212,6 +210,18 @@ word word_next_pow2(word a) {
 bool bint_is_zero(bint *a) {
 	ASSERT(a);
 	return (a->len == 0);
+}
+
+bool bint_is_sint(bint *a) {
+	ASSERT(a);
+	return (a->len == 1) && (a->digits[0] < TWO_TO_THE(WORDSIZE - 1));
+}
+sint bint_to_sint(bint *a) {
+	ASSERT(a);
+	ASSERT(bint_is_sint(a));
+	sint r = (sint) a->digits[0];
+	if (a->sgn) return -r;
+	else return r;
 }
 
 

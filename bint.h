@@ -133,21 +133,16 @@ char *bint_to_str  (bint *a, ulong base);
  0.1. Arithmetic Base Functions 
 
       These functions represent the basic arithmetic operations provided by
-      the CPU itself. By macros, they are currently hand-tuned for 32 and 64
-      bit x86 machines.
+      the CPU itself. 
 
-      TODO: handtune these for other architectures
-      Implementation: base.c
+	  Since the functions are inlined, they don't need to have a declaration
+	  here.
 
-*******************************************************************************/
+word div_with_remainder(word a, word b, word *r);
+word add_with_carry(word a, word x, word *c);
+word mul_with_carry(word a, word b, word *c);
+word sub_with_borrow(word a, word x, word *b);
 
-word div_with_remainder (word a, word b, word *r);
-word add_with_carry     (word a, word x, word *c);
-word mul_with_carry     (word a, word b, word *c);
-word sub_with_borrow    (word a, word x, word *b);
-
-
-/*******************************************************************************
 
  0.2. Helper Functions
       A set of non-arithmetic functions that are frequently required.
@@ -164,6 +159,8 @@ word sub_with_borrow    (word a, word x, word *b);
 int braw_compare (word *a, word *b, ulong a_len, ulong b_len);
 int bint_compare (bint *a, bint *b);
 bool bint_is_zero(bint *a);
+bool bint_is_sint(bint *a);
+sint bint_to_sint(bint *a);
 
 /* return the logarithm of (a,n) to the base B=(1<<WORDSIZE), rounded down */
 ulong braw_logB(word *a, ulong n); 

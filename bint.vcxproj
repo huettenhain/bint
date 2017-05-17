@@ -114,7 +114,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="base.c" />
+    <ClCompile Include="atomics_inline.c" />
     <ClCompile Include="context.c" />
     <ClCompile Include="bint.c" />
     <ClCompile Include="fft.c" />
@@ -131,6 +131,9 @@
     <ClInclude Include="macros.h" />
   </ItemGroup>
   <ItemGroup>
+    <MASM Include="atomics64.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </MASM>
     <MASM Include="fft32.asm">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>

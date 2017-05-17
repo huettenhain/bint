@@ -1,21 +1,33 @@
 #include "bint.h"
 
-/* Calculate a + x + c where c is eihter 0 or 1 (carrybit).
+/* Calculate a + x + c where c is either 0 or 1 (carrybit).
    Returns the result and sets c to the carrybit of the
    addition. Subtraction with borrow is done similarly. */
 INLINE word add_with_carry(word a, word x, word *c) {
+#if defined(MVC_X86_64)
+	word re;
+	*c = _addcarry_u64(*c, a, x, &re);
+	return re;
+#else
     if (*c && !++a) 
         return x;
     *c = (x>WORDMAX-a) ? 1 : 0;
     return a+x;
+#endif
 }
 
 INLINE word sub_with_borrow(word a, word x, word *b) {
+#if defined(MVC_X86_64)
+	word re;
+	*b = _subborrow_u64(*b, a, x, &re);
+	return re;
+#else
     if (*b && !(a--))
         goto _carry_ok;
     *b = (a<x) ? 1 : 0;
 _carry_ok:
     return a-x;
+#endif
 }
 
 /* Calculate (a*b)+(*c). Return the lower word of the calculation
@@ -30,6 +42,12 @@ INLINE word mul_with_carry(word a, word b, word *c) {
         adc edx, 0
         mov [ecx], edx
     }
+#elif defined(MVC_X86_64)
+	word hi, lo;
+	a = _umul128(a, b, &hi);
+	hi += _addcarry_u64(0, a, *c, &lo);
+	*c = hi;
+	return lo;
 #elif defined(GCC_X86_32)
     word ret;
     asm( "mull %4"          "\n\t"
@@ -80,6 +98,8 @@ INLINE word mul_with_carry(word a, word b, word *c) {
 }
 
 
+#ifndef MVC_X86_64
+
 /* Calculate [r][a] / [b]. Return the quotient and store
    the new remainder in [r]. */
 INLINE word div_with_remainder(word a, word b, word *r) {
@@ -91,6 +111,8 @@ INLINE word div_with_remainder(word a, word b, word *r) {
         div b
         mov [ebx],edx
     }
+#elif 0 && defined(MVC_X86_64)
+
 #elif defined(GCC_X86_32)
     word ret;
     asm( "divl %4" "\n\t" "movl %%eax,%1"
@@ -145,6 +167,7 @@ INLINE word div_with_remainder(word a, word b, word *r) {
 }
 
 
+
 /* TODO: Check if this works on *nix */
 /* Calculate [b][a] / [d]. Return the quotient. */
 INLINE word div_without_remainder(word b, word a, word d) {
@@ -154,6 +177,8 @@ INLINE word div_without_remainder(word b, word a, word d) {
         mov edx,b
         div d
     }
+#elif 0 && defined(MVC_X86_64)
+	
 #elif defined(GCC_X86_32)
     word ret;
     asm( "divl %3" "\n\t" "movl %%eax,%1"
@@ -204,3 +229,10 @@ INLINE word div_without_remainder(word b, word a, word d) {
     return (qh<<HWSIZE)|ql;
 #endif
 }
+
+#else 
+
+word div_with_remainder(word a, word b, word *r);
+word div_without_remainder(word a, word b, word d);
+
+#endif 
