@@ -4,29 +4,37 @@
 #include <string.h>
 
 #include "bint.h"
+
+
+word randw() {
+	word w = rand();
+	while (!(w >> (WORDSIZE - 2))) w *= rand();
+	return w;
+}
  
 void randomize_bigint(bint *a) {
 	a->len = rand() % a->mem;
 	for (ulong k = 0; k < a->len; k++) {
-		while(!a->digits[k])
-			a->digits[k] = (word)(rand() * rand() * rand());
+		while (!a->digits[k])
+			a->digits[k] = randw();
 	}
 	a->sgn = ((ulong)rand()) % 2;
 }
 
 void fail(bint *s, bint *t, bint *a, bint *b, bint *c, const char *error) {
-	printf("ERROR for rule: %s\nNot Equal:\n", error);
-	printf(" s = %s\n", bint_to_str(s,10));
-	printf(" t = %s\n", bint_to_str(t, 10));
-	printf("Seed values:\n");
-	printf(" a = %s\n", bint_to_str(a, 10));
-	printf(" b = %s\n", bint_to_str(b, 10));
-	printf(" c = %s\n", bint_to_str(c, 10));
+	printf("ERROR: %s:\n", error);
+	printf("L = %s\n", bint_to_str(s,10));
+	printf("R = %s\n", bint_to_str(t, 10));
+	printf("SEED:\n");
+	printf("a = %s\n", bint_to_str(a, 10));
+	printf("b = %s\n", bint_to_str(b, 10));
+	printf("c = %s\n", bint_to_str(c, 10));
 }
 
 
 bool test_additive_laws(bmc *ctx, ulong rounds) {
 	bool sane = true;
+	sint shorty = 0;
 
 	bint *a = bint_init_alloc(ctx, 0, 9);
 	bint *b = bint_init_alloc(ctx, 0, 9);
@@ -44,7 +52,7 @@ bool test_additive_laws(bmc *ctx, ulong rounds) {
 		bint_add(t, a, b);
 		bint_sub(s, t, b);
 		if (bint_compare(a, s) != 0) {
-			fail(a, s, a, b, c, "(a+b)-b == a");
+			fail(s, a, a, b, c, "(a+b)-b == a");
 			sane = false;
 			break;
 		}
@@ -71,7 +79,25 @@ bool test_additive_laws(bmc *ctx, ulong rounds) {
 				break;
 			}
 		}
+		
+		while (!shorty)
+			shorty = (sint) randw();
+		if (shorty < 0) shorty = -shorty;
+		
+		bint_short_assign(s, shorty);
+		bint_mod(r, a, s);
+		bint_mod(t, b, s);
+		bint_add_to(r, t);
+		bint_mod_to(r, s);
+		bint_add(t, a, b);
+		bint_mod_to(t, s);
+		if (bint_compare(t, r) != 0) {
+			fail(r, t, a, b, s, "((a%c)+(b%c))%c == (a+b)%c");
+			sane = false;
+			break;
+		}
 	}
+
 
 	for (int i = 0; i < 6; i++)
 		free(vars[i]);
