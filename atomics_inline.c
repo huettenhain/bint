@@ -98,7 +98,7 @@ INLINE word mul_with_carry(word a, word b, word *c) {
 }
 
 
-#if 1 || !defined(MVC_X86_64)
+#if !defined(MVC_X86_64)
 
 /* Calculate [r][a] / [b]. Return the quotient and store
    the new remainder in [r]. */
