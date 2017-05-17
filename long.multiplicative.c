@@ -273,6 +273,12 @@ bint_divmod_result bint_divmod(bint *result, bint *a, bint *b, bint *remainder) 
     if (bint_is_zero(b))
         return BDIV_ZERODIV;
 
+	if (bint_is_zero(a)) {
+		if (result) bint0(result);
+		if (remainder) bint0(remainder);
+		return BDIV_OK;
+	}
+
 /* TODO: implement fall-back to one word operation */
 #if 0
 	if (b->len == 1) {
@@ -328,7 +334,6 @@ bint_divmod_result bint_divmod(bint *result, bint *a, bint *b, bint *remainder) 
                 if (!bint_alloc(remainder,l)) return BDIV_MEMFAIL;
                 else memcpy( remainder->digits, context->buffer + r,
                     (remainder->len = l)*sizeof(word) );
-                remainder->sgn = b->sgn;
             }
 
             if ( (new_sgn = a->sgn ^ b->sgn) ) {
@@ -349,10 +354,12 @@ bint_divmod_result bint_divmod(bint *result, bint *a, bint *b, bint *remainder) 
                         remainder->len);
                     remainder->len = bint_logB( remainder ) + 1;
                 }
-            }
-
+			}
+			
+			if (remainder)
+				remainder->sgn = b->sgn;
 			if (result)
-				result->sgn = new_sgn;
+				result->sgn = new_sgn;		
 
             return BDIV_OK;
         } else {

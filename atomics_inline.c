@@ -98,7 +98,7 @@ INLINE word mul_with_carry(word a, word b, word *c) {
 }
 
 
-#ifndef MVC_X86_64
+#if 1 || !defined(MVC_X86_64)
 
 /* Calculate [r][a] / [b]. Return the quotient and store
    the new remainder in [r]. */
@@ -111,8 +111,6 @@ INLINE word div_with_remainder(word a, word b, word *r) {
         div b
         mov [ebx],edx
     }
-#elif 0 && defined(MVC_X86_64)
-
 #elif defined(GCC_X86_32)
     word ret;
     asm( "divl %4" "\n\t" "movl %%eax,%1"
@@ -177,8 +175,6 @@ INLINE word div_without_remainder(word b, word a, word d) {
         mov edx,b
         div d
     }
-#elif 0 && defined(MVC_X86_64)
-	
 #elif defined(GCC_X86_32)
     word ret;
     asm( "divl %3" "\n\t" "movl %%eax,%1"
