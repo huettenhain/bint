@@ -53,14 +53,14 @@ typedef struct bmc {  /* bigint multiplication context */
     word  *buffer;    /* allocated buffer */
     ulong  size;      /* size of allocated buffer */
 
-	/* any integer with less than k_cut many words is multiplied classically,
-	anything above it will use the divide-and-conquer method. */
+ /* any integer with less than k_cut many words is multiplied classically,
+    anything above it will use the divide-and-conquer method. */
     ulong  k_cut;
 #   define BINT_KCUT 15
 
-	/* For each bigint a, let B=(1<<i) be the smallest power of two such that 
-	the length of a is less than B. Then, if the length of a is at most f_dst[i]
-	words less than B, we deploy the FFT multiplication. */
+ /* For each bigint a, let B=(1<<i) be the smallest power of two such that 
+    the length of a is less than B. Then, if the length of a is at most f_dst[i]
+    words less than B, we deploy the FFT multiplication. */
     sint   f_dst[WORDSIZE - 1];
 } bmc;
 
@@ -75,25 +75,24 @@ typedef struct bint {
     ulong   sgn;      /* sign bit. 1:negative, 0:positive */
 } bint;
 
-bmc   *bmc_create   ();
-void   bmc_destroy  (bmc *context);
-bool   bmc_resize   (bmc *context, ulong bytes);
+bmc  *bmc_create        ();
+void  bmc_destroy       (bmc *context);
+bool  bmc_resize        (bmc *context, ulong bytes);
 
-void   bmc_defaults (bmc *context); /* load default values */
-void   bmc_fft      (bmc *context); /* always use FFT method */
+void  bmc_defaults      (bmc *context); /* load default values */
+void  bmc_fft           (bmc *context); /* always use FFT method */
 
-
-bint *bint_init		 (bmc *context, sint init);
-bint *bint_init_alloc(bmc *context, sint init, ulong size);
+bint *bint_init         (bmc *context, sint init);
+bint *bint_init_alloc   (bmc *context, sint init, ulong size);
 
 /* reallocate the memory of a. returns NULL if not enough memory is available. */
-bint *bint_alloc   (bint *a, ulong size);
-void  bint_free    (bint *a);
+bint *bint_alloc        (bint *a, ulong size);
+void  bint_free         (bint *a);
 
 /* after a division, reduce a->len until it is correct */
-void  bint_fit     (bint *a);
-bint *bint_from_str(bint *a, char *s);
-char *bint_to_str  (bint *a, ulong base);
+void  bint_fit          (bint *a);
+bint *bint_from_str     (bint *a, char *s);
+char *bint_to_str       (bint *a, ulong base);
 
 
 /*******************************************************************************
@@ -135,8 +134,8 @@ char *bint_to_str  (bint *a, ulong base);
       These functions represent the basic arithmetic operations provided by
       the CPU itself. 
 
-	  Since the functions are inlined, they don't need to have a declaration
-	  here.
+      Since the functions are inlined, they don't need to have a declaration
+      here.
 
 word div_with_remainder(word a, word b, word *r);
 word add_with_carry(word a, word x, word *c);

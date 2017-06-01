@@ -4,8 +4,8 @@
 #include "macros.h"
 
 typedef struct _COMPLEX {
-	double real;
-	double imag;
+    double real;
+    double imag;
 } COMPLEX, *PCOMPLEX;
 
 

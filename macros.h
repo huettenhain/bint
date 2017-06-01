@@ -71,11 +71,11 @@
 # define DIVUP(_x,_y) ( (_x)%(_y) ? (_x)/(_y)+1 : (_x)/(_y) )
 # 
 # if defined(BITS64)
-#	define TWO_TO_THE(_x) ( 1i64 << (_x) )
+#   define TWO_TO_THE(_x) ( 1i64 << (_x) )
 # elif defined(BITS32)
-#	define TWO_TO_THE(_x) ( 1i32 << (_x) )
+#   define TWO_TO_THE(_x) ( 1i32 << (_x) )
 # else 
-#	define TWO_TO_THE(_x) ( 1    << (_x) )
+#   define TWO_TO_THE(_x) ( 1    << (_x) )
 # endif 
 #
 #ifdef _MSC_VER
